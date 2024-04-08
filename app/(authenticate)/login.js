@@ -44,7 +44,6 @@ const login = () => {
     if (data) {
       const token = data?.session?.access_token;
       AsyncStorage.setItem('authToken', token);
-      console.log('Login Data:', data);
       router.replace('/(home)');
     }
     setIsLoading(false);

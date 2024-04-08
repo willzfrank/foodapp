@@ -14,12 +14,6 @@ const Hotel = ({ item, menu }) => {
           pathname: '/hotel',
           params: {
             id: item.id,
-            name: item.name,
-            adress: item.adress,
-            smalladress: item.smalladress,
-            cuisines: item.cuisines,
-            aggregate_rating: item.aggregate_rating,
-            menu,
           },
         })
       }

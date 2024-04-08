@@ -1,9 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
+import data from '../utils/data.json';
 
 export const CartSlice = createSlice({
-  name: "cart",
+  name: 'cart',
   initialState: {
     cart: [],
+    assets: data,
   },
   reducers: {
     addToCart: (state, action) => {

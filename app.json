@@ -21,7 +21,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.willzfrank.foodyt"
     },
     "scheme": "food-yt",
     "web": {
@@ -29,6 +30,14 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "ab299223-efc5-4da7-8949-412be8e41c46"
+      }
+    }
   }
 }
