@@ -303,7 +303,7 @@ const cart = () => {
                 <Text style={{ color: 'gray' }}>
                   Working towards a manlutrition-free India
                 </Text>
-                <Text>Rs 3</Text>
+                <Text>NGN 3</Text>
               </View>
             </View>
           </View>

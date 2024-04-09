@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,182 +10,216 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import React, { useState } from 'react';
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../supabase';
 
-const register = () => {
+const Register = () => {
+  // State variables to store user input and loading state
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  // Function to sign up a new user
   async function signUpNewUser() {
-    setIsLoading(true);
-    const { data, error } = await supabase.auth.signUp({
-      name: name,
-      email: email,
-      password: password,
-    });
+    // Trim input values to remove extra spaces
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
 
-    if (data?.user?.role == 'authenticated') {
-      Alert.alert(
-        'You have been successfully registered',
-        'please check your email for confirmation'
-      );
+    // Check if name, email, and password are provided
+    if (!trimmedName || !trimmedEmail || !trimmedPassword) {
+      Alert.alert('Error', 'Please enter your name, email, and password');
+      return;
     }
-    if (error) {
-      Alert.alert('Error while registering', 'please try again');
+
+    setIsLoading(true); // Set loading state to true
+    try {
+      // Sign up user with Supabase auth
+      const { data, error } = await supabase.auth.signUp({
+        name: trimmedName,
+        email: trimmedEmail,
+        password: trimmedPassword,
+      });
+
+      // Show success message if user is registered
+      if (data?.user?.role === 'authenticated') {
+        Alert.alert(
+          'Registration Successful',
+          'Please check your email for confirmation'
+        );
+      }
+
+      // Show error message if registration fails
+      if (error) {
+        throw new Error(error.message);
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      Alert.alert('Error', 'Failed to register. Please try again.');
+    } finally {
+      setIsLoading(false); // Set loading state to false
     }
-    setIsLoading(false);
   }
+
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: 'white', alignItems: 'center' }}
-    >
-      <View style={{ marginTop: 50 }}>
-        <Text style={{ fontSize: 20, textAlign: 'center', fontWeight: 'bold' }}>
-          Food App
-        </Text>
+    <SafeAreaView style={styles.container}>
+      {/* Logo */}
+      <View style={styles.logoContainer}>
+        <Text style={styles.logoText}>Nourish</Text>
+        <Text style={[styles.logoText, styles.highlight]}>Now</Text>
       </View>
 
-      <KeyboardAvoidingView>
-        <View style={{ alignItems: 'center' }}>
-          <Text
-            style={{
-              fontSize: 17,
-              fontWeight: 'bold',
-              marginTop: 12,
-              color: 'red',
-            }}
-          >
-            Register to your account
-          </Text>
+      {/* Registration Form */}
+      <KeyboardAvoidingView style={styles.body}>
+        {/* Header */}
+        <Text style={styles.headerText}>Register an Account</Text>
+
+        {/* Name Input */}
+        <View style={styles.inputContainer}>
+          <Ionicons name="person" size={24} color="gray" style={styles.icon} />
+          <TextInput
+            value={name}
+            onChangeText={setName}
+            style={[styles.input, styles.blackText]}
+            placeholder="Enter your Name"
+          />
         </View>
 
-        <View style={{ marginTop: 70 }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 5,
-              backgroundColor: '#E0E0E0',
-              paddingVertical: 5,
-              borderRadius: 5,
-              marginTop: 30,
-            }}
-          >
-            <Ionicons
-              name="person"
-              size={24}
-              color="gray"
-              style={{ marginLeft: 8 }}
-            />
-            <TextInput
-              value={name}
-              onChangeText={(text) => setName(text)}
-              style={{ color: 'gray', marginVertical: 10, width: 300 }}
-              placeholder="enter your Name"
-            />
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 5,
-              backgroundColor: '#E0E0E0',
-              paddingVertical: 5,
-              borderRadius: 5,
-              marginTop: 30,
-            }}
-          >
-            <MaterialIcons
-              style={{ marginLeft: 8 }}
-              name="email"
-              size={24}
-              color="gray"
-            />
-            <TextInput
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-              style={{ color: 'gray', marginVertical: 10, width: 300 }}
-              placeholder="enter your Email"
-            />
-          </View>
-
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 5,
-              backgroundColor: '#E0E0E0',
-              paddingVertical: 5,
-              borderRadius: 5,
-              marginTop: 30,
-            }}
-          >
-            <AntDesign
-              style={{ marginLeft: 8 }}
-              name="lock1"
-              size={24}
-              color="black"
-            />
-            <TextInput
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-              style={{ color: 'gray', marginVertical: 10, width: 300 }}
-              placeholder="enter your password"
-            />
-          </View>
+        {/* Email Input */}
+        <View style={styles.inputContainer}>
+          <MaterialIcons
+            name="email"
+            size={24}
+            color="gray"
+            style={styles.icon}
+          />
+          <TextInput
+            value={email}
+            onChangeText={setEmail}
+            style={[styles.input, styles.blackText]}
+            placeholder="Enter your Email"
+          />
         </View>
 
-        {/* Loader */}
-        {isLoading && (
-          <View style={{ marginTop: 20 }}>
-            <ActivityIndicator size="large" color="#fd5c63" />
-          </View>
-        )}
+        {/* Password Input */}
+        <View style={styles.inputContainer}>
+          <AntDesign name="lock1" size={24} color="black" style={styles.icon} />
+          <TextInput
+            value={password}
+            onChangeText={setPassword}
+            style={[styles.input, styles.blackText]}
+            placeholder="Enter your Password"
+            secureTextEntry={true}
+          />
+        </View>
 
-        <Pressable
-          onPress={signUpNewUser}
-          style={{
-            width: 200,
-            backgroundColor: '#fd5c63',
-            borderRadius: 6,
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            padding: 15,
-            marginTop: 50,
-          }}
-        >
-          <Text
-            style={{
-              textAlign: 'center',
-              fontWeight: 'bold',
-              fontSize: 16,
-              color: 'white',
-            }}
-          >
-            Register
-          </Text>
+        {/* Register Button */}
+        <Pressable onPress={signUpNewUser} style={styles.button}>
+          {isLoading ? (
+            <ActivityIndicator size="small" color="white" />
+          ) : (
+            <Text style={styles.buttonText}>Register</Text>
+          )}
         </Pressable>
 
+        {/* Link to Login */}
         <Pressable
           onPress={() => router.replace('/login')}
-          style={{ marginTop: 15 }}
+          style={styles.linkButton}
         >
-          <Text style={{ textAlign: 'center', color: 'gray', fontSize: 16 }}>
-            Already have an Account? Sign In
-          </Text>
+          <Text style={styles.linkText}>Already have an Account? Sign In</Text>
         </Pressable>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
 
-export default register;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    alignItems: 'center',
+  },
+  logoContainer: {
+    marginTop: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  logoText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#fd5c63',
+  },
+  highlight: {
+    marginLeft: 5,
+    color: 'white',
+    textShadowColor: '#fd5c63',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 5,
+  },
+  body: {
+    flex: 1,
+    marginTop: 30,
+    width: '100%',
+    paddingHorizontal: 20,
+  },
+  headerText: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    marginTop: 12,
+    color: 'grey',
+    textAlign: 'center',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E0E0E0',
+    paddingVertical: 5,
+    borderRadius: 5,
+    marginTop: 30,
+  },
+  icon: {
+    marginLeft: 8,
+  },
+  input: {
+    color: 'gray',
+    marginVertical: 10,
+    width: 300,
+  },
+  loader: {
+    marginTop: 20,
+  },
+  blackText: {
+    color: 'black',
+  },
+  button: {
+    width: 200,
+    backgroundColor: '#fd5c63',
+    borderRadius: 6,
+    alignSelf: 'center',
+    padding: 15,
+    marginTop: 50,
+  },
+  buttonText: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: 'white',
+  },
+  linkButton: {
+    marginTop: 15,
+  },
+  linkText: {
+    textAlign: 'center',
+    color: 'gray',
+    fontSize: 16,
+  },
+});
 
-const styles = StyleSheet.create({});
+export default Register;

@@ -21,10 +21,17 @@ const hotel = () => {
   const router = useRouter();
   const cart = useSelector((state) => state.cart.cart);
   const assests = useSelector((state) => state.cart.assets);
+  const [isContentVisible, setContentVisible] = useState(true);
 
   const params = assests?.find((item) => {
     return item.id === paramsId.id;
   });
+
+  const toggleContentVisibility = () => {
+    setContentVisible((prevVisible) => !prevVisible);
+  };
+
+  const receivedMenu = params?.menu;
 
   const menu = [
     {
@@ -281,9 +288,10 @@ const hotel = () => {
           </View>
         </View>
 
-        {recievedMenu?.map((item, index) => (
-          <FoodItem key={index} item={item} />
-        ))}
+        {isContentVisible &&
+          receivedMenu?.map((item, index) => (
+            <FoodItem key={index} item={item} />
+          ))}
       </ScrollView>
 
       <View style={{ flexDirection: 'row', backgroundColor: 'white' }}>
@@ -384,7 +392,7 @@ const hotel = () => {
                 fontSize: 20,
               }}
             >
-              Food App
+              Nourish Now
             </Text>
           </View>
         </View>
